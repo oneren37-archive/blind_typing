@@ -2,9 +2,13 @@ import React, {useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import style from './Start.module.css'
 
-function Start() {
+export interface IStartProps {
+    onStart():void
+}
+
+function Start(props: IStartProps) {
     const [secondsToStart, setSecondsToStart] = useState<number>(3);
-    const [status, setStatus] = useState<'unready' | 'countdown' | 'start'>('unready');
+    const [status, setStatus] = useState<'unready' | 'countdown' | 'ready'>('unready');
 
     const countDown = () => {
         setStatus('countdown');
@@ -15,12 +19,13 @@ function Start() {
 
         setTimeout(() => {
             clearInterval(timerId);
-            setStatus('start');
+            setStatus('ready');
+            props.onStart()
         }, 1000 * secondsToStart);
     }
 
     return (
-        <div className={style.start}>
+        <div>
             {status === 'unready' && (
                 <Button variant="primary" size="lg" onClick={countDown}>Вперед</Button>
             )}
@@ -28,8 +33,6 @@ function Start() {
             {status === 'countdown' && (
                 <h1 className={style.countDown}>{secondsToStart}</h1>
             )}
-
-            {status === 'start' && ( <span>Стартуем</span>)}
         </div>
     );
 }
